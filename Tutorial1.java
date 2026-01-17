@@ -2,16 +2,15 @@ import java.util.*;
 
 class Student {
     private String name;
-    private int StudentID;
+    private int studentID;
     private int[] marks;
 
     public void setStudentName(String name) {
         this.name = name;
-
     }
 
-    public void setStudentID(int StudentID) {
-        this.StudentID = StudentID;
+    public void setStudentID(int studentID) {
+        this.studentID = studentID;
     }
 
     public void setMarks(int[] marks) {
@@ -19,7 +18,7 @@ class Student {
     }
 
     public int getStudentID() {
-        return StudentID;
+        return studentID;
     }
 
     public String getName() {
@@ -28,10 +27,9 @@ class Student {
 
     public double calculateAverage() {
         int sum = 0;
-        for (int marks : marks) {
-            sum += marks;
+        for (int m : marks) {
+            sum += m;
         }
-
         return (double) sum / marks.length;
     }
 
@@ -41,50 +39,64 @@ class Student {
             System.out.println("Result : PASS");
         } else {
             System.out.println("Result : FAIL");
-
         }
         System.out.println("Average Score : " + avg);
     }
 
     public void displayStudentInfo() {
-        System.out.println("Student ID : " + StudentID);
+        System.out.println("\n--- Student Information ---");
+        System.out.println("Student ID : " + studentID);
         System.out.println("Name : " + name);
     }
-
 }
 
 public class Tutorial1 {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        Student s1 = new Student();
 
-        System.out.print("Enter Student ID : ");
-        s1.setStudentID(sc.nextInt());
+        System.out.print("Enter number of students: ");
+        int totalStudents = sc.nextInt();
+        sc.nextLine(); // consume newline
 
-        sc.nextLine();
+        Student[] students = new Student[totalStudents];
 
-        System.out.print("Enter Student Name : ");
-        s1.setStudentName(sc.nextLine());
+        for (int i = 0; i < totalStudents; i++) {
 
-        System.out.print("Enter the number of subjects : ");
-        int n = sc.nextInt();
+            System.out.println("\n--- Enter details for Student " + (i + 1) + " ---");
 
-        int[] marks = new int[n];
-        for (int i = 0; i < n; i++) {
-            System.out.print("Enter the marks for Subject " + (i + 1) + " : ");
-            marks[i] = sc.nextInt();
+            Student s = new Student();
 
+            System.out.print("Enter Student ID : ");
+            s.setStudentID(sc.nextInt());
+            sc.nextLine();
+
+            System.out.print("Enter Student Name : ");
+            s.setStudentName(sc.nextLine());
+
+            System.out.print("Enter number of subjects : ");
+            int n = sc.nextInt();
+
+            int[] marks = new int[n];
+            for (int j = 0; j < n; j++) {
+                System.out.print("Enter marks for Subject " + (j + 1) + " : ");
+                marks[j] = sc.nextInt();
+            }
+
+            s.setMarks(marks);
+
+            // Store student object
+            students[i] = s;
         }
 
-        s1.setMarks(marks);
+        System.out.println("\n===== Student Average Calculator Result =====");
 
-        System.out.println("Student Average calculator : ");
-
-        s1.calculateAverage();
-        s1.checkResult();
+        for (Student s : students) {
+            s.displayStudentInfo();
+            s.checkResult();
+            System.out.println("--------------------------------------");
+        }
 
         sc.close();
     }
-
 }
