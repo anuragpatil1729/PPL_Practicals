@@ -1,46 +1,46 @@
 import java.util.Scanner;
-import java.util.Arrays;
 
 public class Tutorial2 {
 
-    // find the missing number between 1 to n
+    // Find missing number from 1 to n
     static void findMissingNumber(int[] arr, int n) {
         long expectedSum = (long) n * (n + 1) / 2;
         long actualSum = 0;
 
         for (int num : arr) {
             if (num < 1 || num > n) {
-                System.out.println("Invalid input array");
+                System.out.println("Invalid number entered! Allowed range: 1 to " + n);
                 return;
             }
             actualSum += num;
         }
 
         if (arr.length != n - 1) {
-            System.out.println("Array size must be n-1");
+            System.out.println("Error: You must enter exactly " + (n - 1) + " numbers!");
             return;
         }
 
-        System.out.println("Missing number: " + (expectedSum - actualSum));
+        long missing = expectedSum - actualSum;
+        System.out.println("Missing Number: " + missing);
     }
 
-    // Find largest and Smallest
+    // Find largest & smallest
     static void findLargestSmallest(int[] arr) {
-        int max = arr[0], min = arr[0];
+        int largest = arr[0];
+        int smallest = arr[0];
 
         for (int num : arr) {
-            if (num > max) {
-                max = num;
-            }
-            if (num < min) {
-                min = num;
-            }
+            if (num > largest)
+                largest = num;
+            if (num < smallest)
+                smallest = num;
         }
-        System.out.println("Largest : " + max);
-        System.out.println("Smallest : " + min);
+
+        System.out.println("Largest : " + largest);
+        System.out.println("Smallest : " + smallest);
     }
 
-    // sort array
+    // Sort without Arrays.toString()
     static void sortArray(int[] arr) {
         for (int i = 0; i < arr.length - 1; i++) {
             for (int j = 0; j < arr.length - i - 1; j++) {
@@ -49,50 +49,45 @@ public class Tutorial2 {
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
                 }
-                System.out.println(Arrays.toString(arr));
-
             }
-
+            printArray(arr);
         }
     }
 
-    // linear search algorithm
-    static void searchElement(int arr[], int key) {
-
-        boolean check = false;
-
+    // Search element
+    static void searchElement(int[] arr, int key) {
+        boolean found = false;
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == key) {
-                System.out.print("Element found at position : " + i);
-                check = true;
+                System.out.println("Element found at index: " + i);
+                found = true;
                 break;
-
             }
         }
 
-        if (!check) {
-            System.out.print("Element not found ");
-        }
+        if (!found)
+            System.out.println("Element not found!");
     }
 
-    // Sum pair Puzzle
+    // Find sum pairs
     static void findSumPairs(int[] arr, int sum) {
-        boolean check = false;
+        boolean found = false;
 
         for (int i = 0; i < arr.length; i++) {
             for (int j = i + 1; j < arr.length; j++) {
                 if (arr[i] + arr[j] == sum) {
-                    System.out.print("Pair Found at " + i + " and " + j);
-                    check = true;
+                    System.out.println("Pair found at indices " + i + " and " + j +
+                            "  (" + arr[i] + " + " + arr[j] + ")");
+                    found = true;
                 }
             }
         }
-        if (!check) {
-            System.out.print("Sum pair not found ");
-        }
+
+        if (!found)
+            System.out.println("No sum pair found!");
     }
 
-    // reverse elements
+    // Reverse array
     static void reverseArray(int[] arr) {
         System.out.print("Reversed Array: ");
         for (int i = arr.length - 1; i >= 0; i--) {
@@ -101,37 +96,67 @@ public class Tutorial2 {
         System.out.println();
     }
 
+    // Merge two arrays manually
+    static int[] mergeArrays(int[] a, int[] b) {
+        int[] merged = new int[a.length + b.length];
+        int index = 0;
+
+        for (int num : a)
+            merged[index++] = num;
+        for (int num : b)
+            merged[index++] = num;
+
+        return merged;
+    }
+
+    // Manual print array
+    static void printArray(int[] arr) {
+        System.out.print("[ ");
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+        System.out.println("]");
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter  the size of the array : ");
+        System.out.print("Enter size of the array: ");
         int size = sc.nextInt();
 
-        int arr[] = new int[size];
+        int[] arr = new int[size];
+        System.out.println("Enter " + size + " elements:");
 
-        System.out.println("Enter the elements in the array : ");
         for (int i = 0; i < size; i++) {
             arr[i] = sc.nextInt();
         }
 
         int choice;
+
         do {
             System.out.println("\n--- Array Puzzle Solver Menu ---");
-            System.out.println("1. Find Missing Number");
-            System.out.println("2. Find Largest & Smallest");
+            System.out.println("1. Missing Number (User enters range n)");
+            System.out.println("2. Largest & Smallest");
             System.out.println("3. Sort Array");
             System.out.println("4. Search Element");
             System.out.println("5. Sum Pair Puzzle");
             System.out.println("6. Reverse Array");
+            System.out.println("7. Merge Two Arrays");
             System.out.println("0. Exit");
             System.out.print("Enter choice: ");
+
             choice = sc.nextInt();
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter n (max number): ");
+                    System.out.print("Enter range n (enter numbers 1 to n): ");
                     int n = sc.nextInt();
-                    findMissingNumber(arr, n);
+                    System.out.println("Enter " + (n - 1) + " numbers in any order:");
+                    int[] missingArr = new int[n - 1];
+                    for (int i = 0; i < n - 1; i++)
+                        missingArr[i] = sc.nextInt();
+
+                    findMissingNumber(missingArr, n);
                     break;
 
                 case 2:
@@ -144,18 +169,30 @@ public class Tutorial2 {
 
                 case 4:
                     System.out.print("Enter element to search: ");
-                    int key = sc.nextInt();
-                    searchElement(arr, key);
+                    searchElement(arr, sc.nextInt());
                     break;
 
                 case 5:
                     System.out.print("Enter sum: ");
-                    int sum = sc.nextInt();
-                    findSumPairs(arr, sum);
+                    findSumPairs(arr, sc.nextInt());
                     break;
 
                 case 6:
                     reverseArray(arr);
+                    break;
+
+                case 7:
+                    System.out.print("Enter size of second array: ");
+                    int size2 = sc.nextInt();
+
+                    int[] arr2 = new int[size2];
+                    System.out.println("Enter " + size2 + " elements:");
+                    for (int i = 0; i < size2; i++)
+                        arr2[i] = sc.nextInt();
+
+                    int[] merged = mergeArrays(arr, arr2);
+                    System.out.print("Merged Array: ");
+                    printArray(merged);
                     break;
 
                 case 0:
@@ -165,9 +202,9 @@ public class Tutorial2 {
                 default:
                     System.out.println("Invalid choice!");
             }
+
         } while (choice != 0);
 
         sc.close();
     }
-
 }
