@@ -147,16 +147,16 @@ public class Tutorial7 {
             int choice = sc.nextInt();
 
             switch (choice) {
-                case 1 -> addStudent(sc);
-                case 2 -> viewStudents();
-                case 3 -> searchStudent(sc);
-                case 4 -> updateStudent(sc);
-                case 5 -> deleteStudent(sc);
-                case 6 -> {
+                case 1 : addStudent(sc);
+                case 2 : viewStudents();
+                case 3 : searchStudent(sc);
+                case 4 : updateStudent(sc);
+                case 5 : deleteStudent(sc);
+                case 6 : {
                     System.out.println("Bye!");
                     return;
                 }
-                default -> System.out.println("Invalid choice!");
+                default : System.out.println("Invalid choice!");
             }
         }
     }
