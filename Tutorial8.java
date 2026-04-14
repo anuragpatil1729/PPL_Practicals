@@ -1,235 +1,176 @@
 import java.util.*;
 
+// Order Class
 class Order {
-
     private int orderId;
-
     private String customerName;
-
     private String foodItem;
 
     public Order(int orderId, String customerName, String foodItem) {
-
         this.orderId = orderId;
-
         this.customerName = customerName;
-
         this.foodItem = foodItem;
-
     }
 
     public int getOrderId() {
-
         return orderId;
-
     }
 
     public String getCustomerName() {
-
         return customerName;
-
     }
 
     public String getFoodItem() {
-
         return foodItem;
-
     }
-
 }
 
-// Shared Order Queue
-
+// Shared Queue
 class OrderQueue {
-
     private Queue<Order> orders = new LinkedList<>();
 
     public synchronized void addOrder(Order order) {
-
         orders.add(order);
-
         System.out.println("✅ Order Placed: #" + order.getOrderId() +
-
                 " | " + order.getFoodItem() +
-
                 " | Customer: " + order.getCustomerName());
-
-        notify();
-
+        notifyAll();
     }
 
     public synchronized Order getOrder() {
-
         while (orders.isEmpty()) {
-
             try {
-
                 wait();
-
             } catch (InterruptedException e) {
-
                 e.printStackTrace();
-
             }
-
         }
-
         return orders.poll();
-
     }
-
 }
 
-// Delivery Agent Thread
-
+// Delivery Agent
 class DeliveryAgent extends Thread {
-
     private String agentName;
+    private OrderQueue queue;
 
-    private OrderQueue orderQueue;
-
-    public DeliveryAgent(String agentName, OrderQueue orderQueue) {
-
+    public DeliveryAgent(String agentName, OrderQueue queue) {
         this.agentName = agentName;
-
-        this.orderQueue = orderQueue;
-
+        this.queue = queue;
     }
 
-    @Override
-
     public void run() {
-
         while (true) {
-
-            Order order = orderQueue.getOrder();
-
+            Order order = queue.getOrder();
             deliver(order);
-
         }
-
     }
 
     private void deliver(Order order) {
-
         System.out.println("🚴 " + agentName + " picked Order #" + order.getOrderId());
-
         try {
-
-            Thread.sleep(3000); // simulate delivery
-
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
-
             e.printStackTrace();
-
         }
-
         System.out.println("📦 " + agentName + " delivered " + order.getFoodItem() +
-
                 " to " + order.getCustomerName());
-
     }
-
 }
 
 // Main Class
-
 public class Tutorial8 {
 
     static int orderCounter = 1;
 
-    // Menu
-
     static String[] menu = {
-
-            "Pizza",
-
-            "Burger",
-
-            "Pasta",
-
-            "Biryani",
-
-            "Sandwich"
-
+            "Pizza", "Burger", "Pasta", "Biryani", "Sandwich"
     };
 
+    static List<DeliveryAgent> agents = new ArrayList<>();
+    static boolean deliveryStarted = false;
+
     public static void showMenu() {
-
         System.out.println("\n🍔 FOOD MENU");
-
         for (int i = 0; i < menu.length; i++) {
-
             System.out.println((i + 1) + ". " + menu[i]);
-
         }
-
     }
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-
         OrderQueue queue = new OrderQueue();
-
-        // Start delivery agents
-
-        new DeliveryAgent("Agent A", queue).start();
-
-        new DeliveryAgent("Agent B", queue).start();
-
-        new DeliveryAgent("Agent C", queue).start();
 
         System.out.println("=== 🍽️ Online Food Delivery CLI ===");
 
         while (true) {
 
             System.out.println("\n1. Place Order");
-
-            System.out.println("2. Exit");
+            System.out.println("2. Add Delivery Agent");
+            System.out.println("3. Start Delivery");
+            System.out.println("4. Exit");
 
             System.out.print("Enter choice: ");
-
             int choice = sc.nextInt();
+            sc.nextLine();
 
-            sc.nextLine(); // consume newline
+            switch (choice) {
 
-            if (choice == 1) {
+                case 1:
+                    System.out.print("Enter Customer Name: ");
+                    String name = sc.nextLine();
 
-                System.out.print("Enter Customer Name: ");
+                    showMenu();
 
-                String name = sc.nextLine();
+                    System.out.print("Select food item: ");
+                    int itemChoice = sc.nextInt();
 
-                showMenu();
+                    if (itemChoice < 1 || itemChoice > menu.length) {
+                        System.out.println("Invalid choice!");
+                        continue;
+                    }
 
-                System.out.print("Select food item: ");
+                    String food = menu[itemChoice - 1];
+                    Order order = new Order(orderCounter++, name, food);
+                    queue.addOrder(order);
+                    break;
 
-                int itemChoice = sc.nextInt();
+                case 2:
+                    System.out.print("Enter Agent Name: ");
+                    String agentName = sc.nextLine();
 
-                if (itemChoice < 1 || itemChoice > menu.length) {
+                    DeliveryAgent agent = new DeliveryAgent(agentName, queue);
+                    agents.add(agent);
 
-                    System.out.println("❌ Invalid choice!");
+                    System.out.println("Agent added: " + agentName);
+                    break;
 
-                    continue;
+                case 3:
+                    if (deliveryStarted) {
+                        System.out.println("Delivery already started!");
+                        break;
+                    }
 
-                }
+                    if (agents.isEmpty()) {
+                        System.out.println("Add at least one delivery agent!");
+                        break;
+                    }
 
-                String food = menu[itemChoice - 1];
+                    for (DeliveryAgent a : agents) {
+                        a.start();
+                    }
 
-                Order order = new Order(orderCounter++, name, food);
+                    deliveryStarted = true;
+                    System.out.println("Delivery Started with " + agents.size() + " agents!");
+                    break;
 
-                queue.addOrder(order);
+                case 4:
+                    System.out.println("Exiting system...");
+                    System.exit(0);
 
-            } else if (choice == 2) {
-
-                System.out.println("Exiting system...");
-
-                System.exit(0);
-
-            } else {
-
-                System.out.println("❌ Invalid option!");
-
+                default:
+                    System.out.println("Invalid option!");
             }
 
         }
